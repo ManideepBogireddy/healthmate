@@ -1,0 +1,29 @@
+# Backend - Java/Spring
+healthmate-backend/target/
+healthmate-backend/.mvn/wrapper/maven-wrapper.properties
+healthmate-backend/mvnw
+healthmate-backend/mvnw.cmd
+healthmate-backend/.classpath
+healthmate-backend/.project
+healthmate-backend/.settings/
+healthmate-backend/bin/
+*.class
+*.log
+
+# Frontend - Node/React
+healthmate-frontend/node_modules/
+healthmate-frontend/dist/
+healthmate-frontend/.env.local
+healthmate-frontend/.env.development.local
+healthmate-frontend/.env.test.local
+healthmate-frontend/.env.production.local
+healthmate-frontend/npm-debug.log*
+healthmate-frontend/yarn-debug.log*
+healthmate-frontend/yarn-error.log*
+
+# IDE Specific
+.idea/
+*.iml
+.vscode/
+*.swp
+*.DS_Store

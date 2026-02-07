@@ -1,0 +1,349 @@
+:root {
+  --primary-color: #4f46e5;
+  /* Indigo 600 */
+  --secondary-color: #10b981;
+  /* Emerald 500 */
+  --bg-color: #f3f4f6;
+  /* Gray 100 */
+  --text-color: #1f2937;
+  /* Gray 800 */
+  --card-bg: #ffffff;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 1rem;
+  background-color: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(15px);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  transition: width 0.3s ease;
+}
+
+.navbar.collapsed {
+  width: 80px;
+  align-items: center;
+}
+
+.navbar.expanded {
+  width: 200px;
+  align-items: flex-start;
+  padding: 2rem;
+}
+
+/* Dynamic Content Margin */
+.main-content {
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+/* When navbar is collapsed */
+body:has(.navbar.collapsed) .main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+/* When navbar is expanded */
+body:has(.navbar.expanded) .main-content {
+  margin-left: 200px;
+  width: calc(100% - 200px);
+}
+
+/* Fallback/Default if body:has not supported or initial load */
+.navbar.collapsed+.main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.navbar.expanded+.main-content {
+  margin-left: 200px;
+  width: calc(100% - 200px);
+}
+
+/* Ensure container fits inside main-content */
+.main-content .container {
+  margin: 0 auto;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-decoration: none;
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  margin-bottom: 40px;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: static;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 10px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 100%;
+  justify-content: center;
+  /* Default center for collapsed */
+}
+
+.navbar.expanded .nav-item {
+  justify-content: flex-start;
+  padding: 12px 16px;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  transform: translateX(5px);
+}
+
+.logout-btn {
+  width: 100%;
+  margin: 0 !important;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border: none;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Glassmorphism Utility */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  /* Very transparent white */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  color: white;
+  /* Default text color in glass cards */
+}
+
+.glass-card h3 {
+  margin-top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: #a5b4fc;
+  /* Light indigo */
+}
+
+/* Dashboard Specifics */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #818cf8, #34d399);
+  /* Indigo to Emerald */
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+  color: #94a3b8;
+  /* Slate 400 */
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Chart Container override */
+.chart-container {
+  height: 300px;
+  width: 100%;
+}
+
+/* Plan List Styles */
+.plan-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.plan-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.plan-list li:last-child {
+  border-bottom: none;
+}
+
+.plan-list li::before {
+  content: "•";
+  color: var(--secondary-color);
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+/* Glassmorphism Form Elements */
+.glass-input,
+.glass-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus,
+.glass-select:focus {
+  outline: none;
+  border-color: #818cf8;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}
+
+.glass-input:disabled {
+  background: rgba(255, 255, 255, 0.02);
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.glass-label {
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  font-weight: 500;
+  display: block;
+  font-size: 0.95rem;
+}
+
+.glass-button {
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 20px;
+}
+
+.glass-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.glass-select option {
+  background-color: #1e293b;
+  /* Fallback for select options */
+  color: white;
+}
