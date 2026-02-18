@@ -1,13 +1,26 @@
 :root {
   --primary-color: #4f46e5;
-  /* Indigo 600 */
   --secondary-color: #10b981;
-  /* Emerald 500 */
-  --bg-color: #f3f4f6;
-  /* Gray 100 */
-  --text-color: #1f2937;
-  /* Gray 800 */
-  --card-bg: #ffffff;
+  --bg-color: #0f172a;
+  /* Slate 900 - Dark mode default */
+  --text-color: #f8fafc;
+  /* Slate 50 */
+  --card-bg: rgba(30, 41, 59, 0.7);
+  /* Slate 800 with transparency */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-text: #f8fafc;
+  --glass-text-muted: #94a3b8;
+}
+
+body.light-mode {
+  --bg-color: #f8fafc;
+  --text-color: #1e293b;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-text: #1e293b;
+  --glass-text-muted: #64748b;
 }
 
 body {
@@ -87,6 +100,26 @@ body {
   z-index: 50;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   transition: width 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar for Navbar */
+.navbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.navbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .navbar.collapsed {
@@ -205,26 +238,24 @@ body:has(.navbar.expanded) .main-content {
 
 /* Glassmorphism Utility */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
-  /* Very transparent white */
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  color: white;
-  /* Default text color in glass cards */
+  color: var(--glass-text);
 }
 
 .glass-card h3 {
   margin-top: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--glass-border);
   padding-bottom: 10px;
   margin-bottom: 15px;
   font-weight: 600;
-  color: #a5b4fc;
-  /* Light indigo */
+  color: var(--primary-color);
+  /* More consistent branding */
 }
 
 /* Dashboard Specifics */
@@ -233,7 +264,7 @@ body:has(.navbar.expanded) .main-content {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  color: white;
+  color: var(--text-color);
 }
 
 .stat-value {

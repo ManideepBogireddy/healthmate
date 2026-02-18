@@ -10,6 +10,10 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import CompleteProfile from "./pages/CompleteProfile";
+import WorkoutTracker from "./pages/WorkoutTracker";
+import MealTracker from "./pages/MealTracker";
+import HealthTracker from "./pages/HealthTracker";
+import GoalSetter from "./pages/GoalSetter";
 import "./App.css";
 
 function App() {
@@ -31,6 +35,19 @@ function App() {
             } />
             <Route path="/complete-profile" element={
               <PrivateRoute><CompleteProfile /></PrivateRoute>
+            } />
+            {/* ✅ Moved inside Routes */}
+            <Route path="/workout-tracker" element={
+              <PrivateRoute><WorkoutTracker /></PrivateRoute>
+            } />
+            <Route path="/meal-tracker" element={
+              <PrivateRoute><MealTracker /></PrivateRoute>
+            } />
+            <Route path="/health-tracker" element={
+              <PrivateRoute><HealthTracker /></PrivateRoute>
+            } />
+            <Route path="/goal-center" element={
+              <PrivateRoute><GoalSetter /></PrivateRoute>
             } />
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>

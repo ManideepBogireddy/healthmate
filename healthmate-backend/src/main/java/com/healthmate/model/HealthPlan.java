@@ -20,6 +20,9 @@ public class HealthPlan {
     private List<String> dietPlan; // List of meals/suggestions
     private List<String> exercisePlan; // List of exercises
 
+    private String goal; // e.g. "Weight Loss"
+    private int dailyCalories; // e.g. 2000
+
     public HealthPlan() {
     }
 
@@ -32,6 +35,14 @@ public class HealthPlan {
         this.sleepRecommendation = sleepRecommendation;
         this.dietPlan = dietPlan;
         this.exercisePlan = exercisePlan;
+    }
+
+    public HealthPlan(String userId, double calculatedBmi, String bmiCategory, String dailyWaterIntake,
+            String sleepRecommendation, List<String> dietPlan, List<String> exercisePlan, String goal,
+            int dailyCalories) {
+        this(userId, calculatedBmi, bmiCategory, dailyWaterIntake, sleepRecommendation, dietPlan, exercisePlan);
+        this.goal = goal;
+        this.dailyCalories = dailyCalories;
     }
 
     public String getId() {
@@ -96,5 +107,21 @@ public class HealthPlan {
 
     public void setExercisePlan(List<String> exercisePlan) {
         this.exercisePlan = exercisePlan;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+
+    public int getDailyCalories() {
+        return dailyCalories;
+    }
+
+    public void setDailyCalories(int dailyCalories) {
+        this.dailyCalories = dailyCalories;
     }
 }

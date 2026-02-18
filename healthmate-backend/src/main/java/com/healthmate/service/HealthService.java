@@ -95,7 +95,16 @@ public class HealthService {
             exercise.add("Consult a doctor before intense training");
         }
 
-        HealthPlan plan = new HealthPlan(user.getId(), bmi, category, water, sleep, diet, exercise);
+        int dailyCals = 2000;
+        if (healthGoal.contains("loss"))
+            dailyCals = 1500;
+        else if (healthGoal.contains("muscle"))
+            dailyCals = 2800;
+
+        String goalName = user.getHealthGoal();
+
+        HealthPlan plan = new HealthPlan(user.getId(), bmi, category, water, sleep, diet, exercise, goalName,
+                dailyCals);
         return healthPlanRepository.save(plan);
     }
 
