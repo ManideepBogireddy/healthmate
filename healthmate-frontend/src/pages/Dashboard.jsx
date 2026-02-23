@@ -4,38 +4,26 @@ import WorkoutService from "../services/workout.service";
 import mealService from "../services/meal.service";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { Line } from "react-chartjs-2";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler
-} from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+import ChartComponent from "../components/ChartComponent";
+import HealthTipService from "../services/healthTip.service";
 
 const Dashboard = () => {
     const { currentUser } = useContext(AuthContext);
-    const [plan, setPlan] = useState(null);
     const [history, setHistory] = useState([]);
     const [workouts, setWorkouts] = useState([]);
     const [meals, setMeals] = useState([]);
     const [profile, setProfile] = useState(null);
     const [streak, setStreak] = useState(0);
+    const [dailyTip, setDailyTip] = useState(null);
 
     useEffect(() => {
         if (currentUser) {
-            UserService.getHealthPlan().then(response => setPlan(response.data));
             UserService.getHistory().then(response => setHistory(response.data));
             UserService.getUserProfile().then(response => setProfile(response.data));
             UserService.getStreak().then(response => setStreak(response.data));
             WorkoutService.getUserWorkouts().then(response => setWorkouts(response.data));
             mealService.getUserMeals().then(response => setMeals(response.data));
+            HealthTipService.getTodayTip().then(response => setDailyTip(response.data));
         }
     }, [currentUser]);
 
@@ -59,46 +47,19 @@ const Dashboard = () => {
         return logDateStr === today;
     });
     const latestLog = history.length > 0 ? history[history.length - 1] : null;
+    const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
-    const chartData = {
-        labels: history.map(log => log.date),
-        datasets: [
-            {
-                label: "Weight (kg)",
-                data: history.map(log => log.weight),
-                borderColor: "#6366f1",
-                backgroundColor: "rgba(99, 102, 241, 0.05)",
-                borderWidth: 3,
-                pointRadius: 4,
-                tension: 0.4,
-                fill: true
-            }
-        ]
-    };
-
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: { backgroundColor: '#1e293b', padding: 12, borderRadius: 8 }
-        },
-        scales: {
-            x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
-            y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#94a3b8' } }
-        }
-    };
+    // DAILY_TIPS now handled by the Backend Internal API
 
     return (
-        <div className="container" style={{ paddingTop: '100px', maxWidth: '1100px', color: 'var(--text-color)' }}>
-
+        <div className="container" style={{ paddingTop: '100px', maxWidth: '1100px', color: 'var(--text-main)' }}>
             {/* Header Section */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '30px' }}>
                 <div>
-                    <h1 style={{ fontSize: '2.2rem', margin: 0, color: 'var(--text-color)', fontWeight: '800' }}>Dashboard</h1>
-                    <p style={{ color: 'var(--glass-text-muted)', margin: '5px 0 0 0' }}>Welcome back, <span style={{ color: 'var(--primary-color)', fontWeight: '600' }}>{currentUser?.username}</span>!</p>
+                    <h1 style={{ fontSize: '2.2rem', margin: 0, color: 'var(--text-main)', fontWeight: '800' }}>Dashboard</h1>
+                    <p style={{ color: 'var(--text-muted)', margin: '5px 0 0 0' }}>Welcome back, <span style={{ color: 'var(--primary)', fontWeight: '600' }}>{currentUser?.username}</span>!</p>
                 </div>
-                <div style={{ color: 'var(--glass-text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>
                     {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                 </div>
             </div>
@@ -150,23 +111,60 @@ const Dashboard = () => {
                             {stat.icon}
                         </div>
                         <div>
-                            <div style={{ color: 'var(--glass-text-muted)', fontSize: '0.8rem', fontWeight: '600', textTransform: 'uppercase' }}>{stat.label}</div>
-                            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--glass-text)' }}>{stat.value}</div>
+                            <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: '600', textTransform: 'uppercase' }}>{stat.label}</div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-main)' }}>{stat.value}</div>
                         </div>
                     </Link>
                 ))}
             </div>
+
+            {/* Daily Health Insight - NEW */}
+            {dailyTip && (
+                <div className="glass-card" style={{
+                    padding: '25px',
+                    marginBottom: '30px',
+                    background: `linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%)`,
+                    borderLeft: `5px solid ${dailyTip.color}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px',
+                    animation: 'floatUp 0.8s ease-out'
+                }}>
+                    <div style={{
+                        minWidth: '60px',
+                        height: '60px',
+                        borderRadius: '15px',
+                        background: `${dailyTip.color}20`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2rem'
+                    }}>
+                        {dailyTip.icon}
+                    </div>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: '800', color: dailyTip.color, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                Daily Insight • {dailyTip.title}
+                            </span>
+                        </div>
+                        <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '1rem', lineHeight: '1.5', fontWeight: '500' }}>
+                            {dailyTip.tip}
+                        </p>
+                    </div>
+                </div>
+            )}
 
             {/* Daily Activity Tracker */}
             <div className="glass-card" style={{ padding: '20px', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <div style={{ textAlign: 'center', padding: '0 20px', borderRight: '1px solid var(--glass-border)' }}>
                         <div style={{ fontSize: '2rem', marginBottom: '5px' }}>🔥</div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary-color)' }}>{streak}</div>
-                        <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--glass-text-muted)', textTransform: 'uppercase' }}>Day Streak</div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)' }}>{streak}</div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Day Streak</div>
                     </div>
                     <div>
-                        <h4 style={{ margin: '0 0 10px 0', color: 'var(--glass-text)' }}>Daily Activity Log</h4>
+                        <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-main)' }}>Daily Activity Log</h4>
                         <div style={{ display: 'flex', gap: '8px' }}>
                             {last7Days.map((date, i) => (
                                 <div key={i} style={{ textAlign: 'center' }}>
@@ -174,7 +172,7 @@ const Dashboard = () => {
                                         width: '35px',
                                         height: '35px',
                                         borderRadius: '8px',
-                                        background: hasLogOnDate(date) ? 'var(--primary-color)' : 'rgba(255,255,255,0.05)',
+                                        background: hasLogOnDate(date) ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
                                         border: '1px solid var(--glass-border)',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -184,8 +182,9 @@ const Dashboard = () => {
                                     }}>
                                         {hasLogOnDate(date) && <span style={{ color: 'white', fontSize: '0.8rem' }}>✓</span>}
                                     </div>
-                                    <div style={{ fontSize: '0.65rem', color: 'var(--glass-text-muted)', fontWeight: '600' }}>
-                                        {new Date(date).toLocaleDateString('en-US', { weekday: 'short' }).charAt(0)}
+                                    <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '600', lineHeight: '1.2' }}>
+                                        <div>{new Date(date).toLocaleDateString('en-US', { weekday: 'short' }).charAt(0)}</div>
+                                        <div style={{ fontSize: '0.6rem', opacity: 0.8 }}>{new Date(date).getDate()}</div>
                                     </div>
                                 </div>
                             ))}
@@ -199,11 +198,11 @@ const Dashboard = () => {
 
             {/* Daily Goal Progress Section - NEW */}
             {todayLog && todayLog.dailyCalorieTarget > 0 && (
-                <div className="glass-card" style={{ padding: '25px', marginBottom: '30px', borderLeft: '4px solid var(--primary-color)' }}>
+                <div className="glass-card" style={{ padding: '25px', marginBottom: '30px', borderLeft: '4px solid var(--primary)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                         <div>
-                            <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '1px' }}>Daily Calorie Goal</span>
-                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.2rem', color: 'var(--glass-text)' }}>
+                            <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '1px' }}>Daily Calorie Goal</span>
+                            <h3 style={{ margin: '2px 0 0 0', fontSize: '1.2rem', color: 'var(--text-main)' }}>
                                 {Math.min(Math.round((meals.filter(m => m.date === today).reduce((sum, m) => sum + (m.calories || 0), 0) / todayLog.dailyCalorieTarget) * 100), 100) >= 100
                                     ? "Goal Achieved! Amazing work! 🎉"
                                     : Math.min(Math.round((meals.filter(m => m.date === today).reduce((sum, m) => sum + (m.calories || 0), 0) / todayLog.dailyCalorieTarget) * 100), 100) >= 80
@@ -212,10 +211,10 @@ const Dashboard = () => {
                             </h3>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary-color)' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--primary)' }}>
                                 {Math.min(Math.round((meals.filter(m => m.date === today).reduce((sum, m) => sum + (m.calories || 0), 0) / todayLog.dailyCalorieTarget) * 100), 100)}%
                             </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--glass-text-muted)' }}>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                                 {meals.filter(m => m.date === today).reduce((sum, m) => sum + (m.calories || 0), 0)} / {todayLog.dailyCalorieTarget} kcal
                             </div>
                         </div>
@@ -224,7 +223,7 @@ const Dashboard = () => {
                         <div style={{
                             width: `${Math.min(Math.round((meals.filter(m => m.date === today).reduce((sum, m) => sum + (m.calories || 0), 0) / todayLog.dailyCalorieTarget) * 100), 100)}%`,
                             height: '100%',
-                            background: 'var(--primary-color)',
+                            background: 'var(--primary)',
                             borderRadius: '10px',
                             transition: 'width 0.5s ease'
                         }}></div>
@@ -232,59 +231,23 @@ const Dashboard = () => {
                 </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1.2fr', gap: '30px' }}>
-
+            <div style={{ height: '400px', marginBottom: '60px' }}>
                 {/* Progress Card */}
-                <div className="glass-card" style={{ padding: '25px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <h3 style={{ margin: 0, color: 'var(--glass-text)', fontSize: '1.1rem' }}>Weight Progress</h3>
-                        <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: '600', background: 'rgba(16, 185, 129, 0.1)', padding: '4px 10px', borderRadius: '20px' }}>Active Tracking</span>
-                    </div>
-                    <div style={{ height: '300px' }}>
-                        {history.length > 0 ? (
-                            <Line data={chartData} options={chartOptions} />
-                        ) : (
-                            <div style={{ textAlign: 'center', color: 'var(--glass-text-muted)', padding: '80px 40px' }}>
-                                <div style={{ fontSize: '2rem', marginBottom: '10px' }}>📈</div>
-                                <div>No weights logged yet. Your progress chart will appear here once you log your first entry!</div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Plan Summary Card */}
-                <div className="glass-card" style={{ background: 'var(--primary-color)', color: 'white', padding: '25px', position: 'relative', overflow: 'hidden', border: 'none' }}>
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                        <h3 style={{ margin: 0, color: 'white', fontSize: '1.1rem', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.2)' }}>Daily Health Plan</h3>
-                        {plan ? (
-                            <>
-                                <div style={{ fontSize: '1.4rem', fontWeight: '700', marginBottom: '5px' }}>{plan.goal}</div>
-                                <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', marginBottom: '25px' }}>Target: {plan.dailyCalories} calories per day</p>
-
-                                <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '12px', padding: '15px', backdropFilter: 'blur(5px)' }}>
-                                    <span style={{ fontSize: '0.8rem', fontWeight: '600', opacity: 0.8 }}>TOP SUGGESTION</span>
-                                    <p style={{ margin: '5px 0 0 0', fontWeight: '500' }}>{plan.recommendations?.[0] || 'Keep moving to stay fit!'}</p>
-                                </div>
-                            </>
-                        ) : (
-                            <div style={{ padding: '20px 0' }}>
-                                <p style={{ opacity: 0.8 }}>Complete your profile to generate your personalized Health Plan!</p>
-                            </div>
-                        )}
-                        <Link to="/profile" style={{ display: 'block', marginTop: '30px', color: 'white', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem' }}>
-                            View Full Plan →
-                        </Link>
-                    </div>
-                    {/* Decorative Circle */}
-                    <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-                </div>
+                <ChartComponent
+                    title="Weight Progress"
+                    data={history}
+                    dateKey="date"
+                    metrics={[
+                        { key: 'weight', label: 'Weight (kg)', color: '#6366f1' }
+                    ]}
+                />
             </div>
 
             {/* Bottom Row: Recent Activities */}
             <div style={{ marginTop: '40px', marginBottom: '40px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h3 style={{ margin: 0, color: 'var(--text-color)', fontSize: '1.1rem', border: 'none' }}>Recent Activities</h3>
-                    <Link to="/workout-tracker" style={{ color: 'var(--primary-color)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '600' }}>See all</Link>
+                    <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.1rem', border: 'none' }}>Recent Activities</h3>
+                    <Link to="/workout-tracker" style={{ color: 'var(--primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '600' }}>See all</Link>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                     {workouts.length > 0 ? workouts.slice(-3).reverse().map(w => (
@@ -310,13 +273,13 @@ const Dashboard = () => {
                                 )}
                             </div>
                             <div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--glass-text)', textTransform: 'capitalize' }}>{w.exerciseType}</div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--glass-text-muted)' }}>{w.duration} mins • {w.date}</div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)', textTransform: 'capitalize' }}>{w.exerciseType}</div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{w.duration} mins • {w.date}</div>
                             </div>
                         </div>
                     )) : (
-                        <div className="glass-card" style={{ gridColumn: 'span 3', padding: '30px', textAlign: 'center', color: 'var(--glass-text-muted)' }}>
-                            <p style={{ margin: 0 }}>Start your workout journey! Log your first activity in the <Link to="/workout-tracker" style={{ color: 'var(--primary-color)', fontWeight: '600' }}>Workout Tracker</Link>.</p>
+                        <div className="glass-card" style={{ gridColumn: 'span 3', padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            <p style={{ margin: 0 }}>Start your workout journey! Log your first activity in the <Link to="/workout-tracker" style={{ color: 'var(--primary)', fontWeight: '600' }}>Workout Tracker</Link>.</p>
                         </div>
                     )}
                 </div>

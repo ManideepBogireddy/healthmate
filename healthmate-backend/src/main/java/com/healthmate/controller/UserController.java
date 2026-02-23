@@ -71,4 +71,36 @@ public class UserController {
         HealthPlan plan = healthService.generateOrGetPlan(userId);
         return ResponseEntity.ok(plan);
     }
+
+    @PostMapping("/regenerate-plan")
+    public ResponseEntity<?> regenerateHealthPlan() {
+        String userId = getCurrentUserId();
+        HealthPlan plan = healthService.regeneratePlan(userId);
+        return ResponseEntity.ok(plan);
+    }
+
+    @GetMapping("/bmi-status")
+    public ResponseEntity<?> getBmiStatus() {
+        String userId = getCurrentUserId();
+        HealthPlan plan = healthService.generateOrGetPlan(userId);
+        return ResponseEntity.ok().body(new BmiResponse(plan.getCalculatedBmi(), plan.getBmiCategory()));
+    }
+
+    public static class BmiResponse {
+        private double bmi;
+        private String category;
+
+        public BmiResponse(double bmi, String category) {
+            this.bmi = bmi;
+            this.category = category;
+        }
+
+        public double getBmi() {
+            return bmi;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+    }
 }

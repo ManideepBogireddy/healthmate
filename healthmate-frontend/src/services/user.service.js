@@ -30,9 +30,17 @@ const getHistory = () => {
     return api.get("/analytics/history");
 }
 
+const getBmiStatus = () => {
+    return api.get("/user/bmi-status");
+};
+
 const getStreak = () => {
     return api.get("/analytics/streak");
 }
+
+const regeneratePlan = () => {
+    return api.post("/user/regenerate-plan");
+};
 
 const UserService = {
     getUserProfile,
@@ -40,7 +48,9 @@ const UserService = {
     getHealthPlan,
     logDailyStats,
     getHistory,
-    getStreak
+    getStreak,
+    getBmiStatus,
+    regeneratePlan
 };
 
 export default UserService;

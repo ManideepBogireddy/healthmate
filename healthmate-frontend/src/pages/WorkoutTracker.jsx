@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import WorkoutService from '../services/workout.service';
+import ChartComponent from '../components/ChartComponent';
 
 const WorkoutTracker = () => {
     const { currentUser } = useContext(AuthContext);
@@ -13,6 +14,7 @@ const WorkoutTracker = () => {
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const [chartMetric, setChartMetric] = useState('duration'); // 'duration' or 'caloriesBurned'
 
     useEffect(() => {
         if (currentUser) {
@@ -73,6 +75,54 @@ const WorkoutTracker = () => {
             <div className="dashboard-header">
                 <h2 style={{ fontSize: '2rem', margin: 0 }}>Workout Tracker</h2>
                 <div className="stat-value">Stay Active! 🏃‍♂️</div>
+            </div>
+
+            {/* Chart Section */}
+            <div style={{ marginTop: '30px', marginBottom: '40px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px', gap: '10px' }}>
+                    <button
+                        onClick={() => setChartMetric('duration')}
+                        style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            border: '1px solid var(--glass-border)',
+                            background: chartMetric === 'duration' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                            color: chartMetric === 'duration' ? 'white' : 'var(--text-muted)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Duration
+                    </button>
+                    <button
+                        onClick={() => setChartMetric('caloriesBurned')}
+                        style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            border: '1px solid var(--glass-border)',
+                            background: chartMetric === 'caloriesBurned' ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                            color: chartMetric === 'caloriesBurned' ? 'white' : 'var(--text-muted)',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Calories
+                    </button>
+                </div>
+                <ChartComponent
+                    title={`Workout ${chartMetric === 'duration' ? 'Duration (mins)' : 'Calories Burned'}`}
+                    data={workouts}
+                    dateKey="date"
+                    metrics={[
+                        {
+                            key: chartMetric,
+                            label: chartMetric === 'duration' ? 'Minutes' : 'kcal',
+                            color: chartMetric === 'duration' ? '#10b981' : '#f59e0b'
+                        }
+                    ]}
+                />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginTop: '20px' }}>
@@ -183,12 +233,13 @@ const WorkoutTracker = () => {
                                                 )}
                                             </div>
                                             <div>
-                                                <div style={{ fontWeight: '600', color: 'var(--glass-text)', fontSize: '1rem', textTransform: 'capitalize' }}>
-                                                    {w.exerciseType} <span style={{ color: 'var(--glass-text-muted)', fontWeight: '400', fontSize: '0.9rem' }}>• {w.duration} mins</span>
+                                                <div style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '1rem', textTransform: 'capitalize' }}>
+                                                    {w.exerciseType} <span style={{ color: 'var(--text-muted)', fontWeight: '400', fontSize: '0.9rem' }}>• {w.duration} mins</span>
                                                 </div>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--glass-text-muted)', marginTop: '2px' }}>
+                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                                                     {w.date} {w.caloriesBurned > 0 && <span style={{ color: '#10b981', marginLeft: '5px' }}>• {w.caloriesBurned} kcal</span>}
                                                 </div>
+                                                {w.notes && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px', fontStyle: 'italic' }}>"{w.notes}"</div>}
                                             </div>
                                         </div>
                                         <button
@@ -197,7 +248,7 @@ const WorkoutTracker = () => {
                                             style={{
                                                 background: 'transparent',
                                                 border: 'none',
-                                                color: 'var(--glass-text-muted)',
+                                                color: 'var(--text-muted)',
                                                 cursor: 'pointer',
                                                 padding: '8px',
                                                 borderRadius: '50%',

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import UserService from '../services/user.service';
+import ChartComponent from '../components/ChartComponent';
+import BMICalculator from '../components/BMICalculator';
 
 const HealthTracker = () => {
     const { currentUser } = useContext(AuthContext);
@@ -11,14 +13,25 @@ const HealthTracker = () => {
         sleepDuration: '',
         notes: ''
     });
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         if (currentUser) {
             loadHistory();
+            loadProfile();
         }
     }, [currentUser]);
+
+    const loadProfile = async () => {
+        try {
+            const response = await UserService.getUserProfile();
+            setProfile(response.data);
+        } catch (error) {
+            console.error("Error loading profile", error);
+        }
+    };
 
     const loadHistory = async () => {
         try {
@@ -81,10 +94,24 @@ const HealthTracker = () => {
                 <div className="stat-value">Track your daily wellness 🧘‍♂️</div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '30px', marginTop: '30px' }}>
+            {/* Chart Section */}
+            <div style={{ marginTop: '30px', marginBottom: '30px' }}>
+                <ChartComponent
+                    title="Health Metrics History"
+                    data={history}
+                    dateKey="date"
+                    metrics={[
+                        { key: 'weight', label: 'Weight (kg)', color: '#6366f1' },
+                        { key: 'waterIntake', label: 'Water (L)', color: '#0ea5e9' },
+                        { key: 'sleepDuration', label: 'Sleep (h)', color: '#8b5cf6' }
+                    ]}
+                />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '30px' }}>
 
                 {/* Form Section */}
-                <div className="glass-card">
+                <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                     <h3>Update Today's Stats</h3>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
@@ -114,14 +141,19 @@ const HealthTracker = () => {
                     </form>
                 </div>
 
+                <BMICalculator
+                    initialHeight={profile?.height}
+                    initialWeight={formData.weight || profile?.weight}
+                />
+
                 {/* History Section */}
-                <div className="glass-card">
+                <div className="glass-card" style={{ gridColumn: 'span 2' }}>
                     <h3>Health History</h3>
                     <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
                         {history.length === 0 ? (
-                            <p style={{ color: 'var(--glass-text-muted)', textAlign: 'center', padding: '40px' }}>No records yet. Start your journey today! 🚀</p>
+                            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '40px' }}>No records yet. Start your journey today! 🚀</p>
                         ) : (
-                            <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--glass-text)' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', color: 'var(--text-main)' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                         <th style={{ padding: '12px', textAlign: 'left' }}>Date</th>
@@ -132,7 +164,7 @@ const HealthTracker = () => {
                                 </thead>
                                 <tbody>
                                     {history.slice().reverse().map((log) => (
-                                        <tr key={log.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                        <tr key={log.id || log.date} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                             <td style={{ padding: '12px' }}>{log.date}</td>
                                             <td style={{ padding: '12px', textAlign: 'center' }}>{log.weight} kg</td>
                                             <td style={{ padding: '12px', textAlign: 'center' }}>{log.waterIntake} L</td>
