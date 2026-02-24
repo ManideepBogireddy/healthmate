@@ -16,6 +16,13 @@ const WorkoutTracker = () => {
     const [message, setMessage] = useState('');
     const [chartMetric, setChartMetric] = useState('duration'); // 'duration' or 'caloriesBurned'
 
+    const CALORIE_RATES = {
+        cardio: 10,
+        strength: 6,
+        yoga: 4,
+        sports: 8
+    };
+
     useEffect(() => {
         if (currentUser) {
             loadWorkouts();
@@ -34,7 +41,20 @@ const WorkoutTracker = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormData(prev => {
+            const newData = { ...prev, [name]: value };
+
+            // Auto-calculate calories when duration or type changes
+            if (name === 'duration' || name === 'exerciseType') {
+                const duration = parseInt(newData.duration);
+                if (duration && newData.exerciseType) {
+                    const rate = CALORIE_RATES[newData.exerciseType] || 5;
+                    newData.caloriesBurned = (duration * rate).toString();
+                }
+            }
+
+            return newData;
+        });
     };
 
     const handleSubmit = async (e) => {

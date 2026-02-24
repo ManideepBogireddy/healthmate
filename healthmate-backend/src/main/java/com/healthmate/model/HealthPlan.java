@@ -37,17 +37,20 @@ public class HealthPlan {
         private int carbs;
         private int fats;
         private String suggestion; // e.g., "Oatmeal with Almonds"
+        private List<String> alternatives; // Backup meal options
 
         public MealSuggestion() {
         }
 
-        public MealSuggestion(String mealType, int calories, int protein, int carbs, int fats, String suggestion) {
+        public MealSuggestion(String mealType, int calories, int protein, int carbs, int fats, String suggestion,
+                List<String> alternatives) {
             this.mealType = mealType;
             this.calories = calories;
             this.protein = protein;
             this.carbs = carbs;
             this.fats = fats;
             this.suggestion = suggestion;
+            this.alternatives = alternatives;
         }
 
         // Getters and Setters
@@ -97,6 +100,14 @@ public class HealthPlan {
 
         public void setSuggestion(String suggestion) {
             this.suggestion = suggestion;
+        }
+
+        public List<String> getAlternatives() {
+            return alternatives;
+        }
+
+        public void setAlternatives(List<String> alternatives) {
+            this.alternatives = alternatives;
         }
     }
 

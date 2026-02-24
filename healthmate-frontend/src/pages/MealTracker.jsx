@@ -50,14 +50,14 @@ const MealTracker = () => {
         }
     };
 
-    const handleQuickFill = (suggestion) => {
+    const handleQuickFill = (suggestion, foodName = null) => {
         setFormData({
             mealType: suggestion.mealType,
             calories: suggestion.calories.toString(),
             protein: suggestion.protein.toString(),
             carbs: suggestion.carbs.toString(),
             fats: suggestion.fats.toString(),
-            notes: suggestion.suggestion
+            notes: foodName || suggestion.suggestion
         });
         window.scrollTo({ top: 500, behavior: 'smooth' });
         setMessage(`Pre-filled ${suggestion.mealType} suggestions! 🚀`);
@@ -122,15 +122,33 @@ const MealTracker = () => {
         fats: acc.fats + (parseFloat(m.fats) || 0),
     }), { calories: 0, protein: 0, carbs: 0, fats: 0 });
 
-    const chartData = useMemo(() => {
-        const grouped = meals.reduce((acc, meal) => {
-            const date = typeof meal.date === 'string' ? meal.date.split('T')[0] : '';
-            if (!acc[date]) acc[date] = { date, calories: 0 };
-            acc[date].calories += (parseInt(meal.calories) || 0);
+    const groupedMeals = useMemo(() => {
+        const groups = meals.reduce((acc, meal) => {
+            const date = meal.date || 'Unknown Date';
+            if (!acc[date]) {
+                acc[date] = {
+                    meals: [],
+                    totals: { calories: 0, protein: 0, carbs: 0, fats: 0 }
+                };
+            }
+            acc[date].meals.push(meal);
+            acc[date].totals.calories += (parseInt(meal.calories) || 0);
+            acc[date].totals.protein += (parseFloat(meal.protein) || 0);
+            acc[date].totals.carbs += (parseFloat(meal.carbs) || 0);
+            acc[date].totals.fats += (parseFloat(meal.fats) || 0);
             return acc;
         }, {});
-        return Object.values(grouped);
+
+        return Object.entries(groups)
+            .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA));
     }, [meals]);
+
+    const chartData = useMemo(() => {
+        return groupedMeals.map(([date, data]) => ({
+            date,
+            calories: data.totals.calories
+        })).reverse();
+    }, [groupedMeals]);
 
     return (
         <div className="container" style={{ paddingTop: '80px' }}>
@@ -167,41 +185,70 @@ const MealTracker = () => {
                             <div
                                 key={i}
                                 className="glass-card"
-                                onClick={() => handleQuickFill(s)}
                                 style={{
                                     padding: '20px',
-                                    cursor: 'pointer',
                                     transition: 'all 0.3s ease',
                                     border: '1px solid rgba(255,255,255,0.05)',
                                     position: 'relative',
-                                    overflow: 'hidden'
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.borderColor = 'var(--primary)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+                                    display: 'flex',
+                                    flexDirection: 'column'
                                 }}
                             >
                                 <div style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '8px', textTransform: 'uppercase' }}>{s.mealType}</div>
-                                <div style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '8px', minHeight: '3em' }}>{s.suggestion}</div>
-                                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                <div
+                                    style={{ fontSize: '1rem', fontWeight: '700', marginBottom: '8px', minHeight: '3em', cursor: 'pointer' }}
+                                    onClick={() => handleQuickFill(s, s.suggestion)}
+                                >
+                                    {s.suggestion}
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
                                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>🔥 {s.calories} kcal</span>
                                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>🍗 {s.protein}g P</span>
                                 </div>
-                                <div style={{
-                                    marginTop: '12px',
-                                    fontSize: '0.7rem',
-                                    textAlign: 'right',
-                                    color: 'var(--primary)',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-end',
-                                    gap: '5px'
-                                }}>
+
+                                {s.alternatives && s.alternatives.length > 0 && (
+                                    <div style={{ marginTop: 'auto', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', marginBottom: '8px', letterSpacing: '0.05em' }}>BACKUP PLAN</div>
+                                        <div style={{ maxHeight: '100px', overflowY: 'auto', paddingRight: '5px' }} className="custom-scrollbar">
+                                            {s.alternatives.map((alt, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    onClick={() => handleQuickFill(s, alt)}
+                                                    style={{
+                                                        fontSize: '0.7rem',
+                                                        padding: '6px 8px',
+                                                        borderRadius: '6px',
+                                                        background: alt === s.suggestion ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
+                                                        color: alt === s.suggestion ? 'var(--primary)' : 'var(--text-muted)',
+                                                        cursor: 'pointer',
+                                                        marginBottom: '4px',
+                                                        transition: 'background 0.2s ease'
+                                                    }}
+                                                    onMouseEnter={(e) => { if (alt !== s.suggestion) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                                                    onMouseLeave={(e) => { if (alt !== s.suggestion) e.currentTarget.style.background = 'transparent' }}
+                                                >
+                                                    • {alt}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div
+                                    onClick={() => handleQuickFill(s, s.suggestion)}
+                                    style={{
+                                        marginTop: '12px',
+                                        fontSize: '0.7rem',
+                                        textAlign: 'right',
+                                        color: 'var(--primary)',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-end',
+                                        gap: '5px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
                                     Quick Tap <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                 </div>
                             </div>
@@ -296,86 +343,89 @@ const MealTracker = () => {
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}><path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" /></svg>
                         Log History
                     </h3>
-                    <div style={{ maxHeight: '400px', overflowY: 'auto', paddingRight: '10px' }}>
-                        {meals.length === 0 ? (
+                    <div style={{ maxHeight: '500px', overflowY: 'auto', paddingRight: '10px' }}>
+                        {groupedMeals.length === 0 ? (
                             <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
                                 <div style={{ fontSize: '3rem', marginBottom: '10px' }}>🥙</div>
                                 <p>Your plate is empty! Log your first meal to start tracking.</p>
                             </div>
                         ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {meals.slice().reverse().map((m) => (
-                                    <div key={m.id} style={{
-                                        padding: '15px',
-                                        background: 'rgba(255,255,255,0.03)',
-                                        backdropFilter: 'blur(12px)',
-                                        WebkitBackdropFilter: 'blur(12px)',
-                                        border: '1px solid var(--glass-border)',
-                                        borderRadius: '16px',
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        margin: '0',
-                                        animation: 'floatUp 0.6s ease-out'
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+                                {groupedMeals.map(([date, data]) => (
+                                    <div key={date} className="day-block" style={{
+                                        background: 'rgba(255,255,255,0.02)',
+                                        borderRadius: '20px',
+                                        padding: '5px', // padding 5px to contain the border properly
+                                        border: '1px solid rgba(255,255,255,0.05)'
                                     }}>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <div style={{
-                                                width: '45px',
-                                                height: '45px',
-                                                borderRadius: '12px',
-                                                background: 'rgba(99, 102, 241, 0.1)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                marginRight: '15px',
-                                                fontSize: '1.2rem'
-                                            }}>
-                                                {m.mealType === 'Breakfast' ? '🍳' : m.mealType === 'Lunch' ? '🥗' : m.mealType === 'Dinner' ? '🍛' : '🍎'}
-                                            </div>
-                                            <div>
-                                                <div style={{ fontWeight: '700', color: 'var(--text-main)' }}>{m.mealType}</div>
-                                                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                                                    {m.calories} kcal • {m.date}
-                                                </div>
-                                                {m.notes && <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px', fontStyle: 'italic' }}>"{m.notes}"</div>}
+                                        <div style={{
+                                            padding: '15px 20px',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            background: 'rgba(99, 102, 241, 0.05)',
+                                            borderRadius: '16px 16px 0 0',
+                                            borderBottom: '1px solid rgba(255,255,255,0.05)'
+                                        }}>
+                                            <div style={{ fontWeight: '800', fontSize: '0.9rem', color: 'var(--primary)' }}>📅 {date}</div>
+                                            <div style={{ display: 'flex', gap: '15px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                <span style={{ color: '#f59e0b' }}>🔥 {data.totals.calories} kcal</span>
+                                                <span style={{ color: '#10b981' }}>P: {data.totals.protein.toFixed(1)}g</span>
+                                                <span style={{ color: '#3b82f6' }}>C: {data.totals.carbs.toFixed(1)}g</span>
+                                                <span style={{ color: '#ef4444' }}>F: {data.totals.fats.toFixed(1)}g</span>
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            <div style={{ display: 'flex', gap: '6px' }}>
-                                                <div style={{
-                                                    fontSize: '0.7rem',
-                                                    padding: '3px 8px',
-                                                    borderRadius: '8px',
-                                                    background: 'rgba(16, 185, 129, 0.15)',
-                                                    color: '#10b981',
-                                                    border: '1px solid rgba(16, 185, 129, 0.1)',
-                                                    fontWeight: '600'
-                                                }}>P: {m.protein || 0}g</div>
-                                                <div style={{
-                                                    fontSize: '0.7rem',
-                                                    padding: '3px 8px',
-                                                    borderRadius: '8px',
-                                                    background: 'rgba(59, 130, 246, 0.15)',
-                                                    color: '#3b82f6',
-                                                    border: '1px solid rgba(59, 130, 246, 0.1)',
-                                                    fontWeight: '600'
-                                                }}>C: {m.carbs || 0}g</div>
-                                                <div style={{
-                                                    fontSize: '0.7rem',
-                                                    padding: '3px 8px',
-                                                    borderRadius: '8px',
-                                                    background: 'rgba(245, 158, 11, 0.15)',
-                                                    color: '#f59e0b',
-                                                    border: '1px solid rgba(245, 158, 11, 0.1)',
-                                                    fontWeight: '600'
-                                                }}>F: {m.fats || 0}g</div>
-                                            </div>
-                                            <button
-                                                onClick={() => handleDelete(m.id)}
-                                                style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', opacity: 0.6, padding: '5px' }}
-                                            >
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                                            </button>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '15px' }}>
+                                            {data.meals.slice().reverse().map((m) => (
+                                                <div key={m.id} style={{
+                                                    padding: '12px 15px',
+                                                    background: 'rgba(255,255,255,0.03)',
+                                                    backdropFilter: 'blur(12px)',
+                                                    WebkitBackdropFilter: 'blur(12px)',
+                                                    border: '1px solid var(--glass-border)',
+                                                    borderRadius: '12px',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    animation: 'floatUp 0.4s ease-out'
+                                                }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <div style={{
+                                                            width: '36px',
+                                                            height: '36px',
+                                                            borderRadius: '10px',
+                                                            background: 'rgba(99, 102, 241, 0.1)',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            marginRight: '12px',
+                                                            fontSize: '1rem'
+                                                        }}>
+                                                            {m.mealType === 'Breakfast' ? '🍳' : m.mealType === 'Lunch' ? '🥗' : m.mealType === 'Dinner' ? '🍛' : '🍎'}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '0.9rem' }}>{m.mealType}</div>
+                                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                                                {m.calories} kcal
+                                                            </div>
+                                                            {m.notes && <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>"{m.notes}"</div>}
+                                                        </div>
+                                                    </div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <div style={{ display: 'flex', gap: '5px' }}>
+                                                            <div style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>P: {m.protein || 0}g</div>
+                                                            <div style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6' }}>C: {m.carbs || 0}g</div>
+                                                            <div style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>F: {m.fats || 0}g</div>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleDelete(m.id)}
+                                                            style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', opacity: 0.6, padding: '5px' }}
+                                                        >
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 ))}

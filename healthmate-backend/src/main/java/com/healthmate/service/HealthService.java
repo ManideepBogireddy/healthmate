@@ -166,101 +166,173 @@ public class HealthService {
         int f = (int) (totalF * ratio);
 
         int dayIndex = LocalDate.now().getDayOfWeek().getValue(); // 1 (Mon) to 7 (Sun)
-        String food = "";
+        List<String> options = new ArrayList<>();
 
         if (goal.contains("loss")) {
             if (type.equals("Breakfast")) {
-                if (dayIndex % 3 == 0)
-                    food = "Vegetable Poha with Peanuts and Lemon";
-                else if (dayIndex % 3 == 1)
-                    food = "Moong Dal Chilla with Mint Chutney";
-                else
-                    food = "Oats Upma with Finely Chopped Vegetables";
+                options.addAll(List.of(
+                        "Vegetable Poha with Peanuts and Lemon",
+                        "Moong Dal Chilla with Mint Chutney",
+                        "Oats Upma with Finely Chopped Vegetables",
+                        "Greek Yogurt with Flax Seeds and Walnuts",
+                        "Sprouted Salad with Pomegranate and Lemon",
+                        "Scrambled Tofu with Spinach and Toast",
+                        "Masoor Dal Soup with a dash of Black Pepper",
+                        "Quinoa Porridge with Apple and Cinnamon",
+                        "Rawa Idli with Coconut Chutney",
+                        "Sattu Drink (High Fiber) with Lemon"));
             } else if (type.equals("Lunch")) {
-                if (dayIndex % 3 == 0)
-                    food = "Dal Tadka with 1 Bajra Roti and Cucumber Salad";
-                else if (dayIndex % 3 == 1)
-                    food = "Palak Paneer (Low Fat) with 1 Missi Roti";
-                else
-                    food = "Brown Rice with Mixed Veg Sambar and Curd";
+                options.addAll(List.of(
+                        "Dal Tadka with 1 Bajra Roti and Cucumber Salad",
+                        "Palak Paneer (Low Fat) with 1 Missi Roti",
+                        "Brown Rice with Mixed Veg Sambar and Curd",
+                        "Grilled Chicken Breast with Salad and Sauteed Veggies",
+                        "Roasted Vegetables with Hummus and Whole Wheat Pita",
+                        "Quinoa Pulao with Tofu and Broccoli",
+                        "Chickpea Salad with Lemon Tahini Dressing",
+                        "Whole Wheat Pasta with Pesto and Vegetables",
+                        "Baked Sweet Potato with Black Beans and Corn",
+                        "Mashed Avocado on Whole Wheat Toast with Poached Egg"));
             } else if (type.equals("Snack")) {
-                if (dayIndex % 3 == 0)
-                    food = "Masala Chaas (Buttermilk) with Sprouted Moong";
-                else if (dayIndex % 3 == 1)
-                    food = "Roasted Makhana with Black Salt";
-                else
-                    food = "Apple slices with a dash of Cinnamon";
+                options.addAll(List.of(
+                        "Masala Chaas (Buttermilk) with Sprouted Moong",
+                        "Roasted Makhana with Black Salt",
+                        "Apple slices with a dash of Cinnamon",
+                        "Handful of Almonds and Walnuts",
+                        "Carrot and Cucumber sticks with Hummus",
+                        "Edamame with sea salt",
+                        "Rice cake with peanut butter",
+                        "Cottage cheese with berries",
+                        "Kale chips (Home-made/Baked)",
+                        "Chia Seed Pudding (Stevia-sweetened)"));
             } else { // Dinner
-                if (dayIndex % 3 == 0)
-                    food = "Lauki (Bottle Gourd) Sabzi with 1 Jowar Roti";
-                else if (dayIndex % 3 == 1)
-                    food = "Grilled Paneer Salad with Bell Peppers";
-                else
-                    food = "Tinda Masala with 1 Whole Wheat Phulka";
+                options.addAll(List.of(
+                        "Lauki (Bottle Gourd) Sabzi with 1 Jowar Roti",
+                        "Grilled Paneer Salad with Bell Peppers",
+                        "Tinda Masala with 1 Whole Wheat Phulka",
+                        "Steamed Fish with Ginger-Garlic and Sauteed Greens",
+                        "Mixed Vegetable Soup with a slice of Multigrain Bread",
+                        "Cauliflower Rice with Grilled Tofu and Peas",
+                        "Stir-fry Vegetables with Mushroom and Tofu",
+                        "Baked Salmon with Asparagus and Lemon",
+                        "Zucchini Noodles with Tomato Basil Sauce",
+                        "Lentil Soup (Yellow Dal) with a small portion of Sabzi"));
             }
         } else if (goal.contains("muscle")) {
             if (type.equals("Breakfast")) {
-                if (dayIndex % 3 == 0)
-                    food = "Paneer Bhurji (150g) with 2 Multigrain Rotis";
-                else if (dayIndex % 3 == 1)
-                    food = "Sprouted Moong Salad with 2 Boiled Eggs";
-                else
-                    food = "Masala Egg Omelet (3 eggs) with Brown Bread";
+                options.addAll(List.of(
+                        "Paneer Bhurji (150g) with 2 Multigrain Rotis",
+                        "Sprouted Moong Salad with 2 Boiled Eggs",
+                        "Masala Egg Omelet (3 eggs) with Brown Bread",
+                        "Protein Pancakes (Oats + Whey + Egg Whites)",
+                        "Peanut Butter and Banana on Whole Wheat Toast (2 slices)",
+                        "Greek Yogurt with Granola, Almonds, and Berries",
+                        "Smoked Salmon on Toasted Bagel with Cream Cheese",
+                        "Chickpea flour pancakes (Besan Chilla) with extra paneer stuffing",
+                        "Quinoa Egg Bhurji with vegetables",
+                        "Turkey/Cottage Cheese Sandwich on Multigrain Bread"));
             } else if (type.equals("Lunch")) {
-                if (dayIndex % 3 == 0)
-                    food = "Chicken Masala / Soya Chunk Curry with Brown Rice";
-                else if (dayIndex % 3 == 1)
-                    food = "Fish Curry with Red Rice and Sauted Greens";
-                else
-                    food = "Mutton Curry (Lean) with 2 Bajra Rotis";
+                options.addAll(List.of(
+                        "Chicken Masala / Soya Chunk Curry with Brown Rice",
+                        "Fish Curry with Red Rice and Sauted Greens",
+                        "Mutton Curry (Lean) with 2 Bajra Rotis",
+                        "Beef Stir-fry with Broccoli and Quinoa",
+                        "High Protein Pasta (Lentil Pasta) with Bolognese Sauce",
+                        "Turkey Meatballs with Whole Wheat Spaghetti",
+                        "Chickpea and Spinach Curry with Parboiled Rice",
+                        "Grilled Tofu Bowl with Avocado, Rice, and Black Beans",
+                        "Shrimp Stir-fry with Asparagus and Brown Rice",
+                        "Mashed Sweet Potato with Grilled Salmon and Spinach"));
             } else if (type.equals("Snack")) {
-                if (dayIndex % 3 == 0)
-                    food = "Roasted Chana with Peanut Butter / Boiled Eggs";
-                else if (dayIndex % 3 == 1)
-                    food = "Whey Protein with Milk and 1 Banana";
-                else
-                    food = "Handful of Almonds and Walnuts with Greek Yogurt";
+                options.addAll(List.of(
+                        "Roasted Chana with Peanut Butter / Boiled Eggs",
+                        "Whey Protein with Milk and 1 Banana",
+                        "Handful of Almonds and Walnuts with Greek Yogurt",
+                        "Cottage Steel Bowl with Berries and Honey",
+                        "Biltong or Beef Jerky (Low sodium)",
+                        "Hard-boiled eggs (3-4) with mustard",
+                        "Protein Bar (Home-made or high quality)",
+                        "Tuna Salad (In water) on Whole Wheat Crackers",
+                        "Edamame beans with soy sauce",
+                        "Nut Butter stuffed Celery sticks"));
             } else { // Dinner
-                if (dayIndex % 3 == 0)
-                    food = "Paneer Tikka / Tandoori Fish with Dal Khichdi";
-                else if (dayIndex % 3 == 1)
-                    food = "Grilled Chicken Breast with Sweet Potato Mash";
-                else
-                    food = "Keema Matar (Lean) with 1 Multigrain Roti";
+                options.addAll(List.of(
+                        "Paneer Tikka / Tandoori Fish with Dal Khichdi",
+                        "Grilled Chicken Breast with Sweet Potato Mash",
+                        "Keema Matar (Lean) with 1 Multigrain Roti",
+                        "Baked Salmon with Broccoli and Brown Rice",
+                        "Tofu and Mixed Vegetable Stir-fry with Cashews",
+                        "Beef Stew with Root Vegetables",
+                        "Grilled Shrimp Tacos (Whole wheat tortillas)",
+                        "Lentil Loaf with Roast Potatoes",
+                        "Pork Tenderloin with Apple Sauce and Green Beans",
+                        "Quinoa and Black Bean Chili"));
             }
         } else { // Balanced
             if (type.equals("Breakfast")) {
-                if (dayIndex % 3 == 0)
-                    food = "Idli Sambhar with Coconut Chutney";
-                else if (dayIndex % 3 == 1)
-                    food = "Vegetable Upma with Roasted Cashews";
-                else
-                    food = "Aloo Paratha (Less Oil) with Curd";
+                options.addAll(List.of(
+                        "Idli Sambhar with Coconut Chutney",
+                        "Vegetable Upma with Roasted Cashews",
+                        "Aloo Paratha (Less Oil) with Curd",
+                        "Poha with Onions and Potatoes",
+                        "Wheat Dosa with Tomato Chutney",
+                        "Besan Chilla with Grated Vegetables",
+                        "Cornflakes with Skimmed Milk and Fruit",
+                        "Sandwich with Cucumber, Tomato, and Chutney",
+                        "Namkeen Sewai (Vermicelli) with Peas and Carrots",
+                        "Adai (Lentil Crepe) with Avial"));
             } else if (type.equals("Lunch")) {
-                if (dayIndex % 3 == 0)
-                    food = "Mixed Veg Curry with 2 Phulkas and Curd";
-                else if (dayIndex % 3 == 1)
-                    food = "Rajma Chawal with Kachumber Salad";
-                else
-                    food = "Chole Kulche (Whole Wheat) with Lassi";
+                options.addAll(List.of(
+                        "Mixed Veg Curry with 2 Phulkas and Curd",
+                        "Rajma Chawal with Kachumber Salad",
+                        "Chole Kulche (Whole Wheat) with Lassi",
+                        "Kadhi Pakora with Steamed Rice",
+                        "Veg Pulao with Mixed Raita",
+                        "Baigan Bharta with Bajra Roti and Salad",
+                        "Dal Makhani (Low fat) with 1 Laccha Paratha",
+                        "Spinach and Corn Rice with Dal Fry",
+                        "Mushroom Masala with 2 Multi-grain Rotis",
+                        "Pav Bhaji (Home-made with less butter and whole wheat buns)"));
             } else if (type.equals("Snack")) {
-                if (dayIndex % 3 == 0)
-                    food = "Roasted Makhana (Fox Nuts) / Seasonal Fruit";
-                else if (dayIndex % 3 == 1)
-                    food = "Bhel Puri (Healthy version with sprouts)";
-                else
-                    food = "Dhokla (2-3 pieces) with Green Chutney";
+                options.addAll(List.of(
+                        "Roasted Makhana (Fox Nuts) / Seasonal Fruit",
+                        "Bhel Puri (Healthy version with sprouts)",
+                        "Dhokla (2-3 pieces) with Green Chutney",
+                        "Sev Murmura (Puffed rice) with dry fruits",
+                        "Corn on the cob (Bhutta) with Lemon",
+                        "Handful of Roasted Peanuts",
+                        "Smoothies (Fruit based)",
+                        "Multi-grain crackers with salsa",
+                        "Sabudana Vada (Air-fried)",
+                        "Baked Banana chips"));
             } else { // Dinner
-                if (dayIndex % 3 == 0)
-                    food = "Paneer Matar with 1 Roti and Fresh Salad";
-                else if (dayIndex % 3 == 1)
-                    food = "Bhindi Masala with 1 Roti and Dal";
-                else
-                    food = "Vegetable Biryani with Cucumber Raita";
+                options.addAll(List.of(
+                        "Paneer Matar with 1 Roti and Fresh Salad",
+                        "Bhindi Masala with 1 Roti and Dal",
+                        "Vegetable Biryani with Cucumber Raita",
+                        "Jeera Rice with Dal Tadka and Aloo Gobhi",
+                        "Thai Green Curry (Veg) with Jasmine Rice",
+                        "Veg Manchurian (Home-made) with Fried Rice",
+                        "Pasta Primavera with lots of veggies",
+                        "Paneer Butter Masala (Mild) with 1 Nan",
+                        "Mixed Vegetable Stew with Appam",
+                        "Vegetable Kofta Curry with 2 Phulkas"));
             }
         }
 
-        return new HealthPlan.MealSuggestion(type, cals, p, c, f, food);
+        // Logic to pick primary suggestion:
+        // Day 3, 6 (Wed, Sat): dayIndex % 3 == 0 -> User gets first meal
+        // Day 1, 4, 7 (Mon, Thu, Sun): dayIndex % 3 == 1 -> User gets second meal
+        // Day 2, 5 (Tue, Fri): dayIndex % 3 == 2 -> User gets third meal
+        int primaryIndex = dayIndex % 3;
+        String suggestion = options.get(primaryIndex);
+
+        // Alternatives are all options except the primary one
+        List<String> alternatives = new ArrayList<>(options);
+        // alternatives.remove(primaryIndex); // Keep all 10 as requested: "this plan
+        // and other 10"
+
+        return new HealthPlan.MealSuggestion(type, cals, p, c, f, suggestion, alternatives);
     }
 
     private String getBmiCategory(double bmi) {
