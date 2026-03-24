@@ -30,12 +30,19 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(undefined);
     };
 
+    const updateCurrentUser = (user) => {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const updatedUser = { ...storedUser, ...user };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setCurrentUser(updatedUser);
+    };
+
     const register = async (username, email, password, age, height, weight, activityLevel, healthGoal) => {
         return AuthService.register(username, email, password, age, height, weight, activityLevel, healthGoal);
     }
 
     return (
-        <AuthContext.Provider value={{ currentUser, login, logout, register, loading }}>
+        <AuthContext.Provider value={{ currentUser, login, logout, register, updateCurrentUser, loading }}>
             {!loading && children}
         </AuthContext.Provider>
     );

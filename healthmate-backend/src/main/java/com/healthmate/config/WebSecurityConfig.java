@@ -63,6 +63,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/api/analytics/status").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
+                        .requestMatchers("/api/seed/**").permitAll()
+                        .requestMatchers("/api/trainer/all").permitAll()
                         .requestMatchers("/login/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

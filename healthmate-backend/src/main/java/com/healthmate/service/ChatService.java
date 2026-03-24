@@ -92,7 +92,19 @@ public class ChatService {
             return "You can track your nutrition and log meals in the **Meal Studio** page. It also offers smart meal suggestions and a daily calorie intake chart.";
         }
 
-        // 6. Vitals Hub & 7. BMI Calculator
+        // 7. Blog Studio
+        if (input.contains("blog") || input.contains("story") || input.contains("stories") || input.contains("post")
+                || input.contains("write") || input.contains("article") || input.contains("community")) {
+            return "The **Blog Studio** is where you can read and share health journeys, tips, and inspiration. You can 'Write a story', 'Like' posts, and 'Comment' to engage with the community.";
+        }
+
+        // 8. Trainer Match
+        if (input.contains("trainer") || input.contains("coach") || input.contains("expert") || input.contains("find")
+                || input.contains("match") || input.contains("recommendation")) {
+            return "Need professional guidance? Use the **Find Trainer** page to get personalized trainer recommendations based on your health goals and location. You can view trainer profiles, their specialties, and certifications.";
+        }
+
+        // 9. Vitals Hub & 10. BMI Calculator
         if (input.contains("bmi") || input.contains("calculate") || input.contains("water") || input.contains("sleep")
                 || input.contains("vitals") || input.contains("steps")
                 || input.contains("weight") && !input.contains("update")) {
@@ -103,7 +115,7 @@ public class ChatService {
         }
 
         // Default Helpful Response
-        return "Hello! I am **HealthMate AI**, your helpful assistant. I can guide you through the **Dashboard**, **Goal Center**, **Workout Tracker**, **Meal Studio**, and **Vitals Hub**.\n\n"
+        return "Hello! I am **HealthMate AI**, your helpful assistant. I can guide you through the **Dashboard**, **Goal Center**, **Workout Tracker**, **Meal Studio**, **Blog Studio**, **Find Trainer**, and **Vitals Hub**.\n\n"
                 +
                 "What would you like help with today?";
     }

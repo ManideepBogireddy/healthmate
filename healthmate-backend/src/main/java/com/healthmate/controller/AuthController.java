@@ -205,6 +205,7 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
+                userDetails.getProfilePhoto(),
                 roles));
     }
 
@@ -248,6 +249,12 @@ public class AuthController {
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
+
+                        break;
+                    case "trainer":
+                        Role trainerRole = roleRepository.findByName(ERole.ROLE_TRAINER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(trainerRole);
 
                         break;
                     default:

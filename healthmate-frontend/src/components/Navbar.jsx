@@ -49,30 +49,36 @@ const Navbar = () => {
               textAlign: isExpanded ? "left" : "center",
             }}
           >
-            <div
-              style={{
-                color: isDarkMode ? "#94a3b8" : "#64748b",
-                fontSize: "0.8rem",
-                marginBottom: "2px",
-              }}
-            >
-              {isExpanded ? "Hello," : ""}
+            <div style={{
+                width: isExpanded ? '40px' : '32px',
+                height: isExpanded ? '40px' : '32px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                margin: isExpanded ? '0 0 10px 0' : '0 auto 10px auto',
+                border: '2px solid var(--primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'rgba(255,255,255,0.05)'
+            }}>
+                {currentUser.profilePhoto ? (
+                    <img src={currentUser.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                    <span style={{ fontSize: isExpanded ? '1.2rem' : '1rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+                        {currentUser.username ? currentUser.username.charAt(0).toUpperCase() : 'U'}
+                    </span>
+                )}
             </div>
-            <div
-              style={{
-                color: isDarkMode ? "#f8fafc" : "#0f172a",
-                fontWeight: "600",
-                whiteSpace: "normal",
-                wordBreak: "break-word",
-                lineHeight: "1.2",
-              }}
-            >
-              {isExpanded
-                ? currentUser.username
-                : currentUser.username
-                  ? currentUser.username.charAt(0).toUpperCase()
-                  : "U"}
-            </div>
+            {isExpanded && (
+                <>
+                    <div style={{ color: isDarkMode ? "#94a3b8" : "#64748b", fontSize: "0.8rem", marginBottom: "2px" }}>
+                        Hello,
+                    </div>
+                    <div style={{ color: isDarkMode ? "#f8fafc" : "#0f172a", fontWeight: "600", wordBreak: "break-word", lineHeight: "1.2" }}>
+                        {currentUser.username}
+                    </div>
+                </>
+            )}
           </div>
         )}
 
@@ -177,6 +183,71 @@ const Navbar = () => {
               </span>
               {isExpanded && (
                 <span style={{ marginLeft: "12px" }}>Vitals Hub</span>
+              )}
+            </Link>
+            <Link
+              to="/blog-studio"
+              className="nav-item"
+              title="Blog Studio"
+            >
+              <span
+                style={{
+                  fontSize: "1.2rem",
+                  minWidth: "24px",
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+              </span>
+              {isExpanded && (
+                <span style={{ marginLeft: "12px" }}>Blog Studio</span>
+              )}
+            </Link>
+            {(currentUser.roles?.includes('ROLE_ADMIN') || currentUser.roles?.includes('ROLE_TRAINER') || currentUser.username === 'Manideep') && (
+              <Link
+                to="/moderation-center"
+                className="nav-item"
+                title="Moderation Center"
+              >
+                <span
+                  style={{
+                    fontSize: "1.2rem",
+                    minWidth: "24px",
+                    textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></svg>
+                </span>
+                {isExpanded && (
+                  <span style={{ marginLeft: "12px" }}>Moderation</span>
+                )}
+              </Link>
+            )}
+            <Link
+              to="/trainer-match"
+              className="nav-item"
+              title="Trainer Match"
+            >
+              <span
+                style={{
+                  fontSize: "1.2rem",
+                  minWidth: "24px",
+                  textAlign: "center",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+              </span>
+              {isExpanded && (
+                <span style={{ marginLeft: "12px" }}>Find Trainer</span>
               )}
             </Link>
             <Link

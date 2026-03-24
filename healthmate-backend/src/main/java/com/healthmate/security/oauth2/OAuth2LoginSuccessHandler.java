@@ -81,10 +81,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Generate JWT
         String jwt = jwtUtils.generateTokenFromUsername(user.getUsername());
 
-        // Redirection URL
         String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:5173/login") // Redirect to Login page
                                                                                              // to handle token
                 .queryParam("token", jwt)
+                .queryParam("id", user.getId())
                 .queryParam("username", user.getUsername()) // helpful for greeting
                 .queryParam("newUser", !userOptional.isPresent()) // Flag for frontend
                 .build().toUriString();

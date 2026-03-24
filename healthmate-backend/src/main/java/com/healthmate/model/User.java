@@ -35,6 +35,10 @@ public class User {
   // Physical Attributes
   private int age;
 
+  private String gender;
+
+  private String dateOfBirth;
+
   // Height in cm
   private double height;
 
@@ -46,6 +50,12 @@ public class User {
 
   // weight loss, muscle gain, stay fit
   private String healthGoal;
+
+  private String country;
+  private String state;
+  private String location; // Legacy for simple storage if needed
+
+  private String profilePhoto;
 
   public User() {
   }
@@ -104,6 +114,22 @@ public class User {
     this.age = age;
   }
 
+  public String getGender() {
+    return gender;
+  }
+
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
+
+  public String getDateOfBirth() {
+    return dateOfBirth;
+  }
+
+  public void setDateOfBirth(String dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
+
   public double getHeight() {
     return height;
   }
@@ -134,5 +160,37 @@ public class User {
 
   public void setHealthGoal(String healthGoal) {
     this.healthGoal = healthGoal;
+  }
+
+  public String getCountry() {
+    return country;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setState(String state) {
+    this.state = state;
+  }
+
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+
+  public String getProfilePhoto() {
+    return profilePhoto;
+  }
+
+  public void setProfilePhoto(String profilePhoto) {
+    this.profilePhoto = profilePhoto;
   }
 }

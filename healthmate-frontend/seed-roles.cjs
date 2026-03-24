@@ -18,7 +18,8 @@ async function main() {
             console.log("Seeding roles...");
             const roles = [
                 { name: 'ROLE_USER' },
-                { name: 'ROLE_ADMIN' }
+                { name: 'ROLE_ADMIN' },
+                { name: 'ROLE_TRAINER' }
             ];
             await rolesCollection.insertMany(roles);
             console.log("Roles seeded successfully!");

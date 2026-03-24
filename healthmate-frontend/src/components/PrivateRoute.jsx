@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, roles }) => {
     const { currentUser, loading } = useContext(AuthContext);
 
     if (loading) {
@@ -11,6 +11,10 @@ const PrivateRoute = ({ children }) => {
 
     if (!currentUser) {
         return <Navigate to="/login" />;
+    }
+
+    if (roles && !roles.some(role => currentUser.roles?.includes(role)) && currentUser.username !== 'Manideep') {
+        return <Navigate to="/dashboard" />;
     }
 
     return children;

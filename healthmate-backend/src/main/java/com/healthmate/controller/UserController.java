@@ -54,8 +54,13 @@ public class UserController {
         user.setWeight(updatedMetrics.getWeight());
         user.setHeight(updatedMetrics.getHeight());
         user.setAge(updatedMetrics.getAge());
+        user.setGender(updatedMetrics.getGender());
+        user.setDateOfBirth(updatedMetrics.getDateOfBirth());
         user.setActivityLevel(updatedMetrics.getActivityLevel());
         user.setHealthGoal(updatedMetrics.getHealthGoal());
+        user.setCountry(updatedMetrics.getCountry());
+        user.setState(updatedMetrics.getState());
+        user.setProfilePhoto(updatedMetrics.getProfilePhoto());
 
         userRepository.save(user);
 

@@ -15,6 +15,11 @@ import MealTracker from "./pages/MealTracker";
 import HealthTracker from "./pages/HealthTracker";
 import GoalSetter from "./pages/GoalSetter";
 import HelpCenter from "./pages/HelpCenter";
+import BlogStudio from "./pages/BlogStudio";
+import BlogDetail from "./pages/BlogDetail";
+import ModerationCenter from "./pages/ModerationCenter";
+import TrainerMatch from "./pages/TrainerMatch";
+import TrainerProfile from "./pages/TrainerProfile";
 import Chatbot from "./components/Chatbot";
 import "./App.css";
 
@@ -53,6 +58,21 @@ function App() {
             } />
             <Route path="/help-center" element={
               <PrivateRoute><HelpCenter /></PrivateRoute>
+            } />
+            <Route path="/blog-studio" element={
+              <PrivateRoute><BlogStudio /></PrivateRoute>
+            } />
+            <Route path="/blog/:id" element={
+              <PrivateRoute><BlogDetail /></PrivateRoute>
+            } />
+            <Route path="/moderation-center" element={
+              <PrivateRoute roles={['ROLE_ADMIN', 'ROLE_TRAINER']}><ModerationCenter /></PrivateRoute>
+            } />
+            <Route path="/trainer-match" element={
+              <PrivateRoute><TrainerMatch /></PrivateRoute>
+            } />
+            <Route path="/trainer/:id" element={
+              <PrivateRoute><TrainerProfile /></PrivateRoute>
             } />
             <Route path="/" element={<Navigate to="/login" />} />
           </Routes>

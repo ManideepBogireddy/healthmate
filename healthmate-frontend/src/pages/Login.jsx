@@ -34,6 +34,7 @@ const Login = () => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
         const googleUsername = params.get("username");
+        const googleId = params.get("id");
         const isNewUser = params.get("newUser") === "true";
 
         if (token) {
@@ -41,6 +42,7 @@ const Login = () => {
             // For now, save token and redirect.
             localStorage.setItem("user", JSON.stringify({
                 token: token, // Use 'token' to match AuthService consistency
+                id: googleId || "",
                 username: googleUsername || "User",
                 email: "", // We might not have email in param, but that's okay for now
                 roles: ["ROLE_USER"] // Default assumption
